@@ -17,6 +17,10 @@ export default function App() {
     handleKeyPress,
     restart,
     totalLetters,
+    finishTime,
+    topTimes,
+    currentEntry,
+    isNewBest,
   } = useGameLogic();
 
   // Detect touch devices to show on-screen keyboard
@@ -91,7 +95,13 @@ export default function App() {
       {/* Grand Finale overlay */}
       <AnimatePresence>
         {phase === 'finale' && (
-          <GrandFinale onRestart={restart} />
+          <GrandFinale
+            onRestart={restart}
+            finishTime={finishTime}
+            topTimes={topTimes}
+            currentEntry={currentEntry}
+            isNewBest={isNewBest}
+          />
         )}
       </AnimatePresence>
     </div>

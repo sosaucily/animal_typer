@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { ALPHABET_DATA } from '../data/animals';
+import { saveTime } from '../utils/scores';
 import {
   speakLetter,
   speakPhrase,
@@ -22,6 +23,14 @@ export function useGameLogic() {
   const [lastWrongKey, setLastWrongKey] = useState(null);
   const advanceTimerRef = useRef(null);
 
+  // Timing: the clock starts on the child's first key press and stops when
+  // the final letter is completed. `startTimeRef` is null until they begin.
+  const startTimeRef = useRef(null);
+  const [finishTime, setFinishTime] = useState(null); // elapsed ms for this run
+  const [topTimes, setTopTimes] = useState([]);
+  const [currentEntry, setCurrentEntry] = useState(null);
+  const [isNewBest, setIsNewBest] = useState(false);
+
   const currentData = ALPHABET_DATA[currentIndex] || ALPHABET_DATA[0];
 
   // Init audio on mount
@@ -40,6 +49,11 @@ export function useGameLogic() {
 
       if (!/^[A-Z]$/.test(pressedLetter)) return;
 
+      // Start the clock on the very first letter key the child presses.
+      if (startTimeRef.current === null) {
+        startTimeRef.current = Date.now();
+      }
+
       if (pressedLetter === currentData.letter) {
         setPhase('success');
         setLastWrongKey(null);
@@ -54,6 +68,13 @@ export function useGameLogic() {
           setCompletedLetters((prev) => [...prev, currentData.letter]);
 
           if (currentIndex + 1 >= ALPHABET_DATA.length) {
+            const now = Date.now();
+            const elapsed = now - (startTimeRef.current ?? now);
+            const result = saveTime(elapsed, now);
+            setFinishTime(elapsed);
+            setTopTimes(result.topTimes);
+            setCurrentEntry(result.currentEntry);
+            setIsNewBest(result.isNewBest);
             setPhase('finale');
             playFanfare();
           } else {
@@ -103,6 +124,10 @@ export function useGameLogic() {
     setPhase('waiting');
     setCompletedLetters([]);
     setLastWrongKey(null);
+    startTimeRef.current = null;
+    setFinishTime(null);
+    setCurrentEntry(null);
+    setIsNewBest(false);
   }, []);
 
   return {
@@ -114,5 +139,9 @@ export function useGameLogic() {
     handleKeyPress,
     restart,
     totalLetters: ALPHABET_DATA.length,
+    finishTime,
+    topTimes,
+    currentEntry,
+    isNewBest,
   };
 }

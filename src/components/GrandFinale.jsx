@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
-import { ALPHABET_DATA, getAnimalSVG } from '../data/animals';
+import { ALPHABET_DATA } from '../data/animals';
+import AnimalPicture from './AnimalPicture';
 import { formatTime } from '../utils/scores';
 
 const MEDALS = ['🥇', '🥈', '🥉'];
@@ -77,22 +78,22 @@ export default function GrandFinale({
           key={`bg-${i}`}
           className="absolute rounded-sm"
           style={{
-            width: Math.random() * 20 + 10,
-            height: Math.random() * 20 + 10,
+            width: 10 + (i * 7) % 20,
+            height: 10 + (i * 11) % 20,
             background: ALPHABET_DATA[i % 26].color,
             opacity: 0.2,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
+            left: `${(i * 37) % 100}%`,
+            top: `${(i * 23) % 100}%`,
           }}
           animate={{
             y: [0, -20, 0],
             rotate: [0, 360],
           }}
           transition={{
-            duration: 3 + Math.random() * 3,
+            duration: 3 + (i % 4),
             repeat: Infinity,
             ease: 'easeInOut',
-            delay: Math.random() * 2,
+            delay: (i % 5) * .4,
           }}
         />
       ))}
@@ -187,7 +188,6 @@ export default function GrandFinale({
           >
             {/* Double the animals for seamless loop */}
             {[...ALPHABET_DATA, ...ALPHABET_DATA].map((item, i) => {
-              const AnimalComponent = getAnimalSVG(item.letter);
               return (
                 <motion.div
                   key={`parade-${i}`}
@@ -207,7 +207,7 @@ export default function GrandFinale({
                       boxShadow: 'var(--shadow-paper-sm)',
                     }}
                   >
-                    {AnimalComponent && <AnimalComponent color={item.color} />}
+                    <AnimalPicture letter={item.letter} />
                   </div>
                   <span
                     className="font-display font-bold text-xs text-white/90"
@@ -285,6 +285,7 @@ export default function GrandFinale({
         )}
 
         {/* Restart button */}
+        <a href="/animals/credits.json" target="_blank" rel="noreferrer" className="text-white/70 text-xs underline mb-4">Animal picture credits and licenses</a>
         <motion.button
           onClick={onRestart}
           className="px-8 py-4 rounded-2xl font-display font-bold text-xl sm:text-2xl text-white paper-edge cursor-pointer"

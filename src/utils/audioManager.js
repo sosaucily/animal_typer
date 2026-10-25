@@ -1,9 +1,12 @@
+import { getRecording, usesPersonalVoice } from './voiceStore';
+
 /**
  * AudioManager
  *
  * Audio priority:
- *   1. Pre-recorded .mp3 files in /public/audio/
- *   2. SpeechSynthesis fallback if the file is missing
+ *   1. Your recordings, saved as project audio files by Voice Studio
+ *   2. Pre-recorded .mp3 files in /public/audio/
+ *   3. SpeechSynthesis fallback if the file is missing
  *
  * Expected file naming convention:
  *   /public/audio/letter-A.mp3      → speaks the letter "A"
@@ -14,118 +17,117 @@
  */
 
 let audioCtx = null;
-let currentAudio = null; // track the currently playing Audio element
+let voiceRequest = 0;
+let cancelVoice = null;
+const effectStops = new Set();
 
 function getAudioContext() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   return audioCtx;
 }
 
-/**
- * Try to play a pre-recorded file. Returns true if the file exists, false otherwise.
- */
-function playFile(path) {
+export function stopAudio() {
+  voiceRequest += 1;
+  cancelVoice?.();
+  cancelVoice = null;
+  window.speechSynthesis?.cancel();
+  effectStops.forEach((stop) => stop());
+}
+
+// Resolve after playback, so the game can give every spoken phrase time to finish.
+function playFile(path, { voice = false } = {}) {
   return new Promise((resolve) => {
-    // Stop any currently playing audio clip
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
-    }
-
     const audio = new Audio(path);
-    currentAudio = audio;
-
-    audio.addEventListener('canplaythrough', () => {
-      audio.play();
-      resolve(true);
-    }, { once: true });
-
-    audio.addEventListener('error', () => {
-      currentAudio = null;
-      resolve(false);
-    }, { once: true });
+    let finished = false;
+    const finish = (played) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      audio.pause();
+      audio.removeAttribute('src');
+      if (voice && cancelVoice === cancel) cancelVoice = null;
+      effectStops.delete(cancel);
+      resolve(played);
+    };
+    const cancel = () => finish(true);
+    if (voice) cancelVoice = cancel;
+    else effectStops.add(cancel);
+    const timeout = setTimeout(() => finish(false), 18000);
+    audio.onended = () => finish(true);
+    audio.onerror = () => finish(false);
+    audio.play().catch(() => finish(false));
   });
 }
 
-// ── Speech fallbacks ────────────────────────────────────────────────
-
 function speakWithSynthesis(text) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = 0.85;
-  utterance.pitch = 1.2;
-  utterance.volume = 1;
-
-  const voices = window.speechSynthesis.getVoices();
-  const preferred =
-    voices.find((v) => v.lang.startsWith('en') && v.name.includes('Samantha')) ||
-    voices.find((v) => v.lang.startsWith('en-US')) ||
-    voices.find((v) => v.lang.startsWith('en'));
-
-  if (preferred) utterance.voice = preferred;
-  window.speechSynthesis.speak(utterance);
+  if (!window.speechSynthesis) return Promise.resolve();
+  return new Promise((resolve) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.85;
+    utterance.pitch = 1.2;
+    const voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices.find((voice) => voice.lang.startsWith('en') && voice.name.includes('Samantha'))
+      || voices.find((voice) => voice.lang.startsWith('en-US'))
+      || voices.find((voice) => voice.lang.startsWith('en')) || null;
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timeout);
+      if (cancelVoice === finish) cancelVoice = null;
+      resolve();
+    };
+    const timeout = setTimeout(() => { window.speechSynthesis.cancel(); finish(); }, 18000);
+    cancelVoice = finish;
+    utterance.onend = finish;
+    utterance.onerror = finish;
+    window.speechSynthesis.speak(utterance);
+  });
 }
 
-// ── Public API ──────────────────────────────────────────────────────
-
-/**
- * Speak a single letter name.
- * Tries /audio/letter-A.mp3 first, falls back to SpeechSynthesis.
- */
-export async function speakLetter(letter) {
-  const played = await playFile(`/audio/letter-${letter.toUpperCase()}.mp3`);
-  if (!played) {
-    speakWithSynthesis(letter.toUpperCase());
+async function speak(id, fallback, alternateRecordingId) {
+  voiceRequest += 1;
+  const request = voiceRequest;
+  cancelVoice?.();
+  window.speechSynthesis?.cancel();
+  if (usesPersonalVoice()) {
+    try {
+      const recording = await getRecording(id);
+      if (request !== voiceRequest) return;
+      if (recording && await playFile(recording.url, { voice: true })) return;
+      if (request !== voiceRequest) return;
+      if (alternateRecordingId) {
+        const alternate = await getRecording(alternateRecordingId);
+        if (request !== voiceRequest) return;
+        if (alternate && await playFile(alternate.url, { voice: true })) return;
+      }
+    } catch { /* Keep the original voice available if a project file cannot be read. */ }
   }
+  if (request !== voiceRequest) return;
+  const played = await playFile(`/audio/${id}.mp3`, { voice: true });
+  if (!played && request === voiceRequest) await speakWithSynthesis(fallback);
 }
 
-/**
- * Speak a phrase like "A is for Aardvark!"
- * Tries /audio/phrase-A.mp3 first, falls back to SpeechSynthesis.
- */
-export async function speakPhrase(letter, animal) {
-  const played = await playFile(`/audio/phrase-${letter.toUpperCase()}.mp3`);
-  if (!played) {
-    speakWithSynthesis(`${letter.toUpperCase()} is for ${animal}!`);
-  }
+export function speakLetter(letter) {
+  return speak(`letter-${letter.toUpperCase()}`, letter.toUpperCase());
 }
 
-/**
- * Play a success chime. Tries /audio/success.mp3, falls back to synthesized chime.
- */
+export function speakSuccess(letter, animal) {
+  const upper = letter.toUpperCase();
+  return speak(`phrase-${upper}`, `${upper} is for ${animal}!`, `letter-${upper}`);
+}
+
 export async function playSuccessChime() {
-  const played = await playFile('/audio/success.mp3');
-  if (!played) {
-    synthesizeSuccessChime();
-  }
+  if (!await playFile('/audio/success.mp3')) synthesizeSuccessChime();
 }
 
-/**
- * Play a wrong-key boop. Tries /audio/boop.mp3, falls back to synthesized boop.
- */
 export async function playBoop() {
-  const played = await playFile('/audio/boop.mp3');
-  if (!played) {
-    synthesizeBoop();
-  }
+  if (!await playFile('/audio/boop.mp3')) synthesizeBoop();
 }
 
-/**
- * Play grand finale fanfare. Tries /audio/fanfare.mp3, falls back to synthesized.
- */
 export async function playFanfare() {
-  const played = await playFile('/audio/fanfare.mp3');
-  if (!played) {
-    synthesizeFanfare();
-  }
+  if (!await playFile('/audio/fanfare.mp3')) synthesizeFanfare();
 }
 
 // ── Synthesized sound fallbacks ─────────────────────────────────────

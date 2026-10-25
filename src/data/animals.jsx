@@ -706,7 +706,7 @@ const AnimalSVGs = {
     </svg>
   ),
 
-  Z: ({ color }) => (
+  Z: () => (
     // Zebra
     <svg viewBox="0 0 220 180" fill="none" xmlns="http://www.w3.org/2000/svg">
       {/* Body */}

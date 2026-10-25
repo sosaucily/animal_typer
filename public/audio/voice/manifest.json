@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "clips": {
+    "phrase-A": {
+      "id": "phrase-A",
+      "file": "phrase-A-e578b087f125494c28e5536e.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940681173
+    },
+    "phrase-B": {
+      "id": "phrase-B",
+      "file": "phrase-B-adb5289b3260a15a26fa7cd9.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940688865
+    },
+    "phrase-C": {
+      "id": "phrase-C",
+      "file": "phrase-C-b9871b0e74ad60d0d4ddaecf.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940697698
+    },
+    "phrase-D": {
+      "id": "phrase-D",
+      "file": "phrase-D-82e6ad99baf6eb9632ee531f.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940724166
+    },
+    "phrase-E": {
+      "id": "phrase-E",
+      "file": "phrase-E-c9676852e9e4ef0ef75a1d15.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940738042
+    },
+    "phrase-F": {
+      "id": "phrase-F",
+      "file": "phrase-F-77f3d87fd020b50ea9317da1.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940744605
+    },
+    "phrase-G": {
+      "id": "phrase-G",
+      "file": "phrase-G-1d0806f0dc50145f00778fd7.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940752246
+    },
+    "phrase-H": {
+      "id": "phrase-H",
+      "file": "phrase-H-56aa3f985ea4c460d214e5c0.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940759550
+    },
+    "phrase-I": {
+      "id": "phrase-I",
+      "file": "phrase-I-e1654f1f7305ef06814fa019.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940765642
+    },
+    "phrase-J": {
+      "id": "phrase-J",
+      "file": "phrase-J-3675c8da07b89ef2c38e1a64.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940774461
+    },
+    "phrase-K": {
+      "id": "phrase-K",
+      "file": "phrase-K-3bdf27e2572f3b6ef0fc61cc.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940781605
+    },
+    "phrase-L": {
+      "id": "phrase-L",
+      "file": "phrase-L-017f5c24a3c43c4951717305.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940786971
+    },
+    "phrase-M": {
+      "id": "phrase-M",
+      "file": "phrase-M-6b5236a33c1a6e4c215d4a79.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940793846
+    },
+    "phrase-N": {
+      "id": "phrase-N",
+      "file": "phrase-N-2a1715991d59c2a341307fa6.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940800546
+    },
+    "phrase-O": {
+      "id": "phrase-O",
+      "file": "phrase-O-8f34952b389db3345de35a13.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940806888
+    },
+    "phrase-P": {
+      "id": "phrase-P",
+      "file": "phrase-P-a29c963174ceca1579bf0e37.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940812108
+    },
+    "phrase-Q": {
+      "id": "phrase-Q",
+      "file": "phrase-Q-894b5405e3ad867d26775392.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940817086
+    },
+    "phrase-R": {
+      "id": "phrase-R",
+      "file": "phrase-R-37f73837dd7df94edd9094bd.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940822198
+    },
+    "phrase-S": {
+      "id": "phrase-S",
+      "file": "phrase-S-a822ff366a4463b03b629043.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940826643
+    },
+    "phrase-T": {
+      "id": "phrase-T",
+      "file": "phrase-T-a55de3193202504b1ad385d0.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940833889
+    },
+    "phrase-U": {
+      "id": "phrase-U",
+      "file": "phrase-U-84d9f7239484152514c8b27b.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940839826
+    },
+    "phrase-V": {
+      "id": "phrase-V",
+      "file": "phrase-V-a46c346f9981bb3b3dc96a90.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940845353
+    },
+    "phrase-W": {
+      "id": "phrase-W",
+      "file": "phrase-W-b04159d7445ffcea77d4bc79.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940850425
+    },
+    "phrase-X": {
+      "id": "phrase-X",
+      "file": "phrase-X-47faaabad3bce62ffda96304.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940856051
+    },
+    "phrase-Y": {
+      "id": "phrase-Y",
+      "file": "phrase-Y-032dee9af3a6b908fa9b0e3d.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940861019
+    },
+    "phrase-Z": {
+      "id": "phrase-Z",
+      "file": "phrase-Z-7b130048b91018c4672bb273.webm",
+      "mimeType": "audio/webm;codecs=opus",
+      "updatedAt": 1792940865636
+    }
+  }
+}

@@ -1,13 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { Mic } from 'lucide-react';
 import ShadowBox from './components/ShadowBox';
 import LetterStage from './components/LetterStage';
 import ProgressTracker from './components/ProgressTracker';
 import OnScreenKeyboard from './components/OnScreenKeyboard';
 import GrandFinale from './components/GrandFinale';
+import VoiceStudio from './components/VoiceStudio';
 import { useGameLogic } from './hooks/useGameLogic';
+import { stopAudio } from './utils/audioManager';
 
 export default function App() {
+  const [studioOpen, setStudioOpen] = useState(false);
   const {
     currentData,
     currentIndex,
@@ -21,24 +25,14 @@ export default function App() {
     topTimes,
     currentEntry,
     isNewBest,
-  } = useGameLogic();
+  } = useGameLogic(studioOpen);
 
   // Detect touch devices to show on-screen keyboard
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-
-  useEffect(() => {
-    const hasTouchScreen =
-      'ontouchstart' in window ||
-      navigator.maxTouchPoints > 0;
-
-    // Also check if it's a small screen (likely tablet/phone)
-    const isSmallScreen = window.innerWidth < 1024;
-
-    setIsTouchDevice(hasTouchScreen && isSmallScreen);
-  }, []);
+  const [isTouchDevice] = useState(() => ('ontouchstart' in window || navigator.maxTouchPoints > 0) && window.innerWidth < 1024);
 
   return (
-    <div
+    <><div
+      inert={studioOpen}
       className="w-full h-full flex flex-col font-body"
       style={{
         background: 'linear-gradient(180deg, #EDE7F6 0%, #E8EAF6 50%, #E3F2FD 100%)',
@@ -46,6 +40,7 @@ export default function App() {
     >
       {/* Title bar */}
       <header className="flex items-center justify-center py-2 sm:py-3 px-4 relative z-20">
+        <button id="open-voice-studio" aria-label="Voice studio" className="studio-launch" disabled={phase === 'success' || phase === 'finale'} onClick={() => { stopAudio(); setStudioOpen(true); }}><Mic size={16} /><span>Voice studio</span></button>
         <h1
           className="font-display font-bold tracking-tight"
           style={{
@@ -104,6 +99,6 @@ export default function App() {
           />
         )}
       </AnimatePresence>
-    </div>
+    </div>{studioOpen && <VoiceStudio onClose={() => { setStudioOpen(false); requestAnimationFrame(() => document.getElementById('open-voice-studio')?.focus()); }} />}</>
   );
 }

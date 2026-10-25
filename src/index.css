@@ -137,6 +137,9 @@ kbd { display: inline-block; background: white; border: 1px solid #d9dfd4; borde
 .voice-header h2 { font-family: 'Fredoka', sans-serif; font-size: 34px; font-weight: 500; margin-top: 4px; letter-spacing: -.025em; }
 .icon-button { display: grid; place-items: center; border: 1px solid #dbe2d6; border-radius: 50%; height: 36px; width: 36px; flex-shrink: 0; }
 .voice-intro { color: #74806e; font-size: 13px; line-height: 1.7; max-width: 610px; margin-top: 12px; }
+.voice-local-notice { display: grid; gap: 5px; margin-top: 16px; padding: 13px 15px; border-radius: 12px; border: 1px solid #d5e4cb; background: #eef5e9; color: #355c43; font-size: 12px; line-height: 1.5; }
+.voice-local-notice strong { font-weight: 900; }
+.voice-local-notice code { font-size: 11px; font-weight: 800; background: #fff8; padding: 2px 4px; border-radius: 4px; }
 .voice-intro kbd { font-size: 10px; }
 .voice-progress { display: flex; justify-content: space-between; font-size: 11px; color: #73806d; margin-top: 22px; font-weight: 800; }
 .voice-breakdown { color: #62745c; font-size: 11px; font-weight: 800; margin-top: 5px; }

@@ -23,6 +23,8 @@ these project files when **Use my recordings in the game** is enabled. Commit an
 publish the updated project to include the voices on other devices. A published
 copy can play and export them; edit the files through the local app. Missing
 recordings use the original MP3 files in `public/audio`, then browser speech.
+The published Voice Studio explains that recording requires a local build and
+disables recording there while keeping listening and backup export available.
 On a correct key, the game speaks your recorded sentence while showing its
 animal. Personal takes finish playing before the game advances. Gameplay pauses
 while Voice studio is open. The A–Z buttons jump straight to each sentence.

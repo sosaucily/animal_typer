@@ -185,7 +185,8 @@ export default function VoiceStudio({ onClose }) {
           <div><p className="eyebrow">A familiar voice for every letter</p><h2 id="voice-title">Your voice, their zoo.</h2></div>
           <button ref={closeRef} className="icon-button" onClick={onClose} disabled={busy || transferring} aria-label="Close voice studio"><X size={22} /></button>
         </header>
-        <p className="voice-intro">{loading ? 'Loading project voices…' : canEdit ? <>One full sentence for each letter. Hold <kbd>Space</kbd> or the microphone button, say the sentence shown, and release to save it in the project.</> : 'To add recordings, open this app from the project on your computer. Your published game includes the saved voice files.'}</p>
+        <p className="voice-intro">{loading ? 'Loading project voices…' : canEdit ? <>One full sentence for each letter. Hold <kbd>Space</kbd> or the microphone button, say the sentence shown, and release to save it in the project.</> : 'Listen to the saved sentences here. To change them, open the project on your computer.'}</p>
+        {!loading && !canEdit && <div className="voice-local-notice" role="note"><strong>Recording is available on a local build only.</strong><span>On your computer, run <code>npm run dev</code> in the project folder and open Voice Studio there. Publish the updated project when your new takes are ready.</span></div>}
         <div className="voice-progress"><span>{count} of 26 sentences saved</span><span>Letter {index + 1} / 26</span></div>
         <p className="voice-breakdown">{count === 26 ? 'Your whole alphabet is ready!' : `${26 - count} sentences left to record`}</p>
         <progress max="26" value={count} aria-label="Recording progress" />
@@ -201,12 +202,12 @@ export default function VoiceStudio({ onClose }) {
               onPointerDown={(event) => { if (event.button !== 0) return; event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); begin(); }}
               onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop}
               onContextMenu={(event) => event.preventDefault()}
-              aria-label="Hold to record" aria-pressed={status === 'recording'}
-            ><Mic size={24} />{status === 'preparing' ? 'Allow microphone, then speak…' : status === 'recording' ? `Recording · ${seconds}s — release to save` : status === 'saving' ? 'Saving your voice…' : recordings[prompt.id] ? 'Hold to record a new take' : 'Hold to record'}</button>
-            <p className="record-note">Wait for “Recording” before speaking. Up to 15 seconds per take.</p>
+              aria-label={canEdit ? 'Hold to record' : 'Recording requires a local build'} aria-pressed={status === 'recording'}
+            ><Mic size={24} />{!canEdit ? 'Record on a local build' : status === 'preparing' ? 'Allow microphone, then speak…' : status === 'recording' ? `Recording · ${seconds}s — release to save` : status === 'saving' ? 'Saving your voice…' : recordings[prompt.id] ? 'Hold to record a new take' : 'Hold to record'}</button>
+            {canEdit && <p className="record-note">Wait for “Recording” before speaking. Up to 15 seconds per take.</p>}
             <div className="voice-take-actions">
               <button onClick={playing ? stopPreview : preview} disabled={locked || !recordings[prompt.id]}><Play size={16} />{playing ? 'Stop playback' : 'Listen to take'}</button>
-              <button onClick={remove} disabled={locked || !canEdit || !recordings[prompt.id]} aria-label="Delete this take"><Trash2 size={16} />Delete take</button>
+              {canEdit && <button onClick={remove} disabled={locked || !recordings[prompt.id]} aria-label="Delete this take"><Trash2 size={16} />Delete take</button>}
             </div>
           </div>
         </div>
@@ -223,7 +224,7 @@ export default function VoiceStudio({ onClose }) {
             try { setUsesPersonalVoice(event.target.checked); setEnabled(event.target.checked); }
             catch { setMessage('Your browser could not save this preference.'); }
           }} />Use my recordings in the game</label>
-          <div className="voice-backups"><button disabled={locked || !count} onClick={download}><Download size={15} />Export backup</button><button disabled={locked || !canEdit} onClick={() => fileRef.current.click()}><Upload size={15} />Import backup</button><input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={upload} /></div>
+          <div className="voice-backups"><button disabled={locked || !count} onClick={download}><Download size={15} />Export backup</button>{canEdit && <button disabled={locked} onClick={() => fileRef.current.click()}><Upload size={15} />Import backup</button>}<input ref={fileRef} type="file" accept=".json,application/json" hidden onChange={upload} /></div>
           {canEdit && legacyCount > 0 && <button className="legacy-copy-button" disabled={locked} onClick={copyPrevious}><Upload size={15} />Copy {legacyCount} earlier browser recording{legacyCount === 1 ? '' : 's'} into project</button>}
           {!canEdit && legacyCount > 0 && <button className="legacy-copy-button" disabled={locked} onClick={downloadPrevious}><Download size={15} />Download {legacyCount} earlier browser recording{legacyCount === 1 ? '' : 's'}</button>}
           <p>{canEdit ? 'Takes are saved as audio files in this project. Publish the updated project to share your voice on other devices. Export backup makes another copy.' : 'These voice files were included when the project was published. Record new takes in the local project app.'} Unrecorded prompts use the original voice.</p>
